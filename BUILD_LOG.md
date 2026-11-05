@@ -95,6 +95,30 @@
 - Ran final batch test processing 20/20 articles end-to-end in 14.6s (82.0 articles/min)
 - Inspected PostgreSQL database and editor review queue confirming dual-layer verification and routing
 
+## Visualization Extension
+
+| Timestamp | Command | Exit Code | One-line Outcome |
+|---|---|---|---|
+| 2026-11-06T01:22:36 | python -c "from app.events import publish; ..." | 0 | Phase A Gate passed: pub/sub event received on factory_events |
+| 2026-11-06T01:22:51 | python -c "from app.llm import generate_summary; ..." | 0 | Phase B Gate passed: token streaming verified with callback |
+| 2026-11-06T01:23:04 | update app/tasks.py with events | 0 | Phase C complete: task publishes start, stage transitions, tokens, and completion |
+| 2026-11-06T01:23:33 | update app/main.py with /ws/factory | 0 | Phase D complete: WebSocket endpoint relays Redis events |
+| 2026-11-06T01:24:33 | create app/static/factory.html | 0 | Phases E, F, G, H complete: 2D virtual factory UI, batch input, live stream, metrics |
+| 2026-11-06T01:24:50 | create frontend/dev-reload.py, dev.sh, dev.ps1 | 0 | Phase I complete: nodemon dev workflow created |
+| 2026-11-06T01:25:21 | docker compose down -v; docker compose up -d --build | 0 | Phase J clean rebuild and start |
+| 2026-11-06T01:34:42 | curl GET /factory | 0 | Static factory floor loaded (<!DOCTYPE html>) |
+| 2026-11-06T01:34:49 | ws client test against /ws/factory | 0 | WebSocket streaming verified: task_started, token, stage_change, task_completed |
+| 2026-11-06T01:35:03 | curl POST /articles/submit | 0 | Original CLI / REST contract verified working unchanged |
+| 2026-11-06T01:35:18 | 20-article WebSocket streaming batch test | 0 | 20/20 completed with 472 streamed tokens in 8.5s |
+
+## Phase J — Visualization end-to-end — PASS
+- Real-time 2D virtual factory floor operational at `http://localhost:8000/factory`
+- Token-level streaming verified from Ollama through Celery task to frontend
+- Redis pub/sub event bus relaying all stage transitions and batched tokens via `/ws/factory`
+- Batch submission panel tested with 20 concurrent articles
+- Original non-visual REST API contracts (`/articles/submit`, `/tasks/{id}`, `/summaries`, `/review`) preserved and functional
+
+
 
 
 

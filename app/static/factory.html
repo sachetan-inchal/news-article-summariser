@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>News Summariser Factory Floor</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #0f1117;
+      color: #e2e8f0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Top Navigation & Metrics Bar */
+    header {
+      background: #1a1d29;
+      border-bottom: 1px solid #2a2d3a;
+      padding: 0.75rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+    .brand {
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: #60a5fa;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .metrics {
+      display: flex;
+      gap: 1rem;
+    }
+    .metric-badge {
+      background: #12151f;
+      border: 1px solid #2a2d3a;
+      border-radius: 6px;
+      padding: 0.35rem 0.75rem;
+      font-size: 0.85rem;
+      display: flex;
+      gap: 0.4rem;
+      align-items: center;
+    }
+    .metric-badge span.val {
+      font-weight: bold;
+      font-family: monospace;
+      font-size: 0.95rem;
+    }
+    .m-submitted span.val { color: #93c5fd; }
+    .m-inflight span.val { color: #f59e0b; }
+    .m-auto span.val { color: #22c55e; }
+    .m-review span.val { color: #eab308; }
+    .m-failed span.val { color: #ef4444; }
+
+    /* Main Grid Layout */
+    .container {
+      display: flex;
+      flex: 1;
+      gap: 1rem;
+      padding: 1rem;
+      height: calc(100vh - 60px);
+      overflow: hidden;
+    }
+
+    /* Left Sidebar */
+    .sidebar {
+      width: 360px;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      height: 100%;
+    }
+    .panel {
+      background: #1a1d29;
+      border: 1px solid #2a2d3a;
+      border-radius: 8px;
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+    }
+    .panel-title {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #94a3b8;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .batch-input-panel { flex: 0 0 auto; }
+    textarea#batch-text {
+      width: 100%;
+      height: 130px;
+      background: #0f1117;
+      border: 1px solid #2a2d3a;
+      border-radius: 6px;
+      color: #e2e8f0;
+      font-family: inherit;
+      font-size: 0.85rem;
+      padding: 0.5rem;
+      resize: vertical;
+      margin-bottom: 0.75rem;
+    }
+    textarea#batch-text:focus {
+      outline: none;
+      border-color: #3b82f6;
+    }
+    .btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+    }
+    button {
+      background: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      padding: 0.35rem 0.65rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    button:hover { background: #1d4ed8; }
+    button.btn-secondary {
+      background: #334155;
+    }
+    button.btn-secondary:hover { background: #475569; }
+    button.btn-danger {
+      background: #991b1b;
+    }
+    button.btn-danger:hover { background: #b91c1c; }
+
+    .event-log-panel {
+      flex: 1;
+      min-height: 0;
+    }
+    #event-log {
+      flex: 1;
+      background: #0a0d14;
+      border: 1px solid #2a2d3a;
+      border-radius: 6px;
+      padding: 0.5rem;
+      font-family: monospace;
+      font-size: 0.75rem;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      line-height: 1.4;
+      color: #cbd5e1;
+    }
+    .log-line { margin-bottom: 2px; }
+    .log-time { color: #64748b; }
+    .log-type { color: #38bdf8; font-weight: bold; }
+    .log-art { color: #fbbf24; }
+
+    /* Factory Floor (Right Flex) */
+    .factory-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      height: 100%;
+      overflow-y: auto;
+    }
+
+    /* Conveyor Belt Stations */
+    .conveyor {
+      background: #1a1d29;
+      border: 1px solid #2a2d3a;
+      border-radius: 8px;
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    .stations-row {
+      display: flex;
+      gap: 0.75rem;
+      align-items: stretch;
+      overflow-x: auto;
+      padding-bottom: 0.5rem;
+    }
+    .station {
+      flex: 1;
+      min-width: 140px;
+      background: #12151f;
+      border: 1px solid #2a2d3a;
+      border-radius: 6px;
+      display: flex;
+      flex-direction: column;
+      min-height: 180px;
+      transition: border-color 0.2s;
+    }
+    .station-header {
+      background: #181b26;
+      border-bottom: 1px solid #2a2d3a;
+      padding: 0.4rem 0.6rem;
+      font-size: 0.75rem;
+      font-family: monospace;
+      font-weight: 700;
+      color: #94a3b8;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .station.active {
+      animation: pulseBorder 1.2s infinite alternate;
+    }
+    @keyframes pulseBorder {
+      0% { border-color: #3b82f6; box-shadow: 0 0 5px rgba(59, 130, 246, 0.3); }
+      100% { border-color: #93c5fd; box-shadow: 0 0 12px rgba(147, 197, 253, 0.6); }
+    }
+    .station-tray {
+      padding: 0.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      flex: 1;
+      overflow-y: auto;
+      max-height: 240px;
+    }
+
+    /* Article Card */
+    .card {
+      background: #1e2230;
+      border: 1px solid #2d3345;
+      border-left: 3px solid #64748b;
+      border-radius: 4px;
+      padding: 0.4rem 0.5rem;
+      font-size: 0.75rem;
+      animation: fadeIn 0.2s ease-in-out;
+      cursor: default;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-3px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .card.stage-intake { border-left-color: #94a3b8; }
+    .card.stage-llm { border-left-color: #3b82f6; }
+    .card.stage-verify_rules { border-left-color: #a855f7; }
+    .card.stage-verify_nli { border-left-color: #eab308; }
+    .card.stage-store { border-left-color: #10b981; }
+    .card.stage-failed { border-left-color: #ef4444; background: #2a1b1b; }
+    .card-id { font-weight: bold; color: #f1f5f9; font-family: monospace; }
+    .card-snippet { color: #94a3b8; margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+    /* Output Lanes */
+    .output-row {
+      display: flex;
+      gap: 1rem;
+    }
+    .output-lane {
+      flex: 1;
+      background: #12151f;
+      border: 1px solid #2a2d3a;
+      border-radius: 8px;
+      padding: 0.75rem;
+      min-height: 140px;
+      display: flex;
+      flex-direction: column;
+    }
+    .lane-auto { border-top: 3px solid #22c55e; }
+    .lane-review { border-top: 3px solid #eab308; }
+    .lane-title {
+      font-size: 0.8rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      display: flex;
+      justify-content: space-between;
+      font-family: monospace;
+    }
+    .lane-auto .lane-title { color: #22c55e; }
+    .lane-review .lane-title { color: #eab308; }
+    .lane-tray {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      align-content: flex-start;
+      flex: 1;
+    }
+    .lane-tray .card {
+      width: 140px;
+    }
+    .more-badge {
+      font-size: 0.75rem;
+      color: #94a3b8;
+      align-self: center;
+      padding: 0.2rem 0.5rem;
+      font-family: monospace;
+    }
+
+    /* Live Token Stream */
+    .token-panel {
+      background: #1a1d29;
+      border: 1px solid #2a2d3a;
+      border-radius: 8px;
+      padding: 1rem;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 200px;
+    }
+    .token-stream-container {
+      flex: 1;
+      background: #0a0d14;
+      border: 1px solid #2a2d3a;
+      border-radius: 6px;
+      padding: 0.75rem;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      font-family: monospace;
+    }
+    .article-stream {
+      border: 1px solid #1e2433;
+      border-radius: 4px;
+      background: #0f1420;
+      padding: 0.5rem;
+    }
+    .stream-header {
+      color: #60a5fa;
+      font-size: 0.75rem;
+      font-weight: bold;
+      border-bottom: 1px solid #1e2433;
+      padding-bottom: 0.25rem;
+      margin-bottom: 0.35rem;
+      display: flex;
+      justify-content: space-between;
+    }
+    .stream-content {
+      color: #a5b4fc;
+      font-size: 0.85rem;
+      line-height: 1.4;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    /* Reconnect Banner */
+    #reconnect-banner {
+      display: none;
+      background: #b91c1c;
+      color: white;
+      text-align: center;
+      padding: 0.4rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="reconnect-banner">WebSocket disconnected. Attempting reconnection...</div>
+
+  <header>
+    <div class="brand">
+      <span>⚙</span> NEWS SUMMARISER FACTORY
+    </div>
+    <div class="metrics">
+      <div class="metric-badge m-submitted">Submitted: <span class="val" id="stat-submitted">0</span></div>
+      <div class="metric-badge m-inflight">In-Flight: <span class="val" id="stat-inflight">0</span></div>
+      <div class="metric-badge m-auto">Auto: <span class="val" id="stat-auto">0</span></div>
+      <div class="metric-badge m-review">Review: <span class="val" id="stat-review">0</span></div>
+      <div class="metric-badge m-failed">Failed: <span class="val" id="stat-failed">0</span></div>
+    </div>
+  </header>
+
+  <div class="container">
+    <!-- LEFT SIDEBAR -->
+    <div class="sidebar">
+      <div class="panel batch-input-panel">
+        <div class="panel-title">Batch Input</div>
+        <textarea id="batch-text" placeholder="Paste articles separated by blank lines..."></textarea>
+        <div class="btn-row">
+          <button onclick="submitBatch(1)">Submit 1</button>
+          <button onclick="submitBatch(5)">Submit 5</button>
+          <button onclick="submitBatch(20)">Submit 20</button>
+          <button class="btn-secondary" onclick="loadSamples()">Load 20 samples</button>
+          <button class="btn-danger" onclick="clearAll()">Clear</button>
+        </div>
+      </div>
+
+      <div class="panel event-log-panel">
+        <div class="panel-title">
+          <span>Event Log</span>
+          <span id="log-count" style="font-weight: normal; font-size: 0.75rem;">0 lines</span>
+        </div>
+        <div id="event-log"></div>
+      </div>
+    </div>
+
+    <!-- FACTORY FLOOR -->
+    <div class="factory-area">
+      <div class="conveyor">
+        <div class="panel-title">Factory Floor Processing Stations</div>
+        <div class="stations-row">
+          <div class="station" data-stage="intake" id="station-intake">
+            <div class="station-header"><span>INTAKE</span><span class="count" id="cnt-intake">0</span></div>
+            <div class="station-tray" id="tray-intake"></div>
+          </div>
+          <div class="station" data-stage="llm" id="station-llm">
+            <div class="station-header"><span>LLM</span><span class="count" id="cnt-llm">0</span></div>
+            <div class="station-tray" id="tray-llm"></div>
+          </div>
+          <div class="station" data-stage="verify_rules" id="station-verify_rules">
+            <div class="station-header"><span>RULES</span><span class="count" id="cnt-verify_rules">0</span></div>
+            <div class="station-tray" id="tray-verify_rules"></div>
+          </div>
+          <div class="station" data-stage="verify_nli" id="station-verify_nli">
+            <div class="station-header"><span>NLI</span><span class="count" id="cnt-verify_nli">0</span></div>
+            <div class="station-tray" id="tray-verify_nli"></div>
+          </div>
+          <div class="station" data-stage="store" id="station-store">
+            <div class="station-header"><span>DB</span><span class="count" id="cnt-store">0</span></div>
+            <div class="station-tray" id="tray-store"></div>
+          </div>
+        </div>
+
+        <!-- Output Lanes -->
+        <div class="output-row">
+          <div class="output-lane lane-auto">
+            <div class="lane-title"><span>AUTO ✓</span><span id="cnt-lane-auto">0</span></div>
+            <div class="lane-tray" id="tray-auto"></div>
+          </div>
+          <div class="output-lane lane-review">
+            <div class="lane-title"><span>REVIEW ⚠</span><span id="cnt-lane-review">0</span></div>
+            <div class="lane-tray" id="tray-review"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Live Token Stream -->
+      <div class="token-panel">
+        <div class="panel-title">Live Token Stream</div>
+        <div class="token-stream-container" id="stream-container">
+          <div style="color: #64748b; font-size: 0.8rem;">Awaiting article token generation...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let sampleOffset = 0;
+    let cachedSamples = [];
+
+    // State
+    const articles = new Map(); // article_id -> { cardElement, tokenPanel, stage, text }
+    const activeStreams = []; // list of article_ids currently having stream panels
+    const stats = { submitted: 0, inflight: 0, auto: 0, review: 0, failed: 0 };
+    const logs = [];
+
+    // Token batcher
+    let tokenBatchTimeout = null;
+    let pendingTokenBatches = new Map(); // article_id -> { count, snippet }
+
+    // Elements
+    const logContainer = document.getElementById("event-log");
+    const reconnectBanner = document.getElementById("reconnect-banner");
+    const streamContainer = document.getElementById("stream-container");
+
+    function updateStatsUI() {
+      document.getElementById("stat-submitted").textContent = stats.submitted;
+      document.getElementById("stat-inflight").textContent = stats.inflight;
+      document.getElementById("stat-auto").textContent = stats.auto;
+      document.getElementById("stat-review").textContent = stats.review;
+      document.getElementById("stat-failed").textContent = stats.failed;
+
+      // Update station counts
+      ["intake", "llm", "verify_rules", "verify_nli", "store"].forEach(st => {
+        const tray = document.getElementById(`tray-${st}`);
+        const cntEl = document.getElementById(`cnt-${st}`);
+        const stationEl = document.getElementById(`station-${st}`);
+        const count = tray ? tray.children.length : 0;
+        if (cntEl) cntEl.textContent = count;
+        if (stationEl) {
+          if (count > 0) stationEl.classList.add("active");
+          else stationEl.classList.remove("active");
+        }
+      });
+
+      document.getElementById("cnt-lane-auto").textContent = stats.auto;
+      document.getElementById("cnt-lane-review").textContent = stats.review;
+    }
+
+    function addLogLine(type, artId, details) {
+      const now = new Date();
+      const timeStr = now.toTimeString().split(' ')[0] + '.' + String(now.getMilliseconds()).padStart(3, '0');
+      const artStr = artId ? `#${artId}` : '';
+      const lineText = `${timeStr}  ${type.padEnd(11)}  ${artStr.padEnd(6)}  ${details || ''}`;
+      
+      logs.push(lineText);
+      if (logs.length > 200) logs.shift();
+
+      const el = document.createElement("div");
+      el.className = "log-line";
+      el.innerHTML = `<span class="log-time">${timeStr}</span>  <span class="log-type">${type.padEnd(11)}</span>  <span class="log-art">${artStr.padEnd(6)}</span>  ${escapeHtml(details || '')}`;
+      logContainer.appendChild(el);
+      logContainer.scrollTop = logContainer.scrollHeight;
+      document.getElementById("log-count").textContent = `${logs.length} lines`;
+    }
+
+    function escapeHtml(str) {
+      return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    }
+
+    function flushTokenBatches() {
+      pendingTokenBatches.forEach((batch, artId) => {
+        addLogLine(`TOKEN×${batch.count}`, artId, `"${batch.snippet}"`);
+      });
+      pendingTokenBatches.clear();
+      tokenBatchTimeout = null;
+    }
+
+    function queueTokenLog(artId, token) {
+      if (!pendingTokenBatches.has(artId)) {
+        pendingTokenBatches.set(artId, { count: 0, snippet: "" });
+      }
+      const b = pendingTokenBatches.get(artId);
+      b.count += 1;
+      if (b.snippet.length < 18) {
+        b.snippet += token.replace(/\n/g, ' ');
+        if (b.snippet.length > 18) b.snippet = b.snippet.slice(0, 18);
+      }
+
+      if (!tokenBatchTimeout) {
+        tokenBatchTimeout = setTimeout(flushTokenBatches, 50);
+      }
+    }
+
+    function getOrCreateCard(artId, initialSnippet) {
+      if (articles.has(artId)) return articles.get(artId);
+
+      const card = document.createElement("div");
+      card.className = "card stage-intake";
+      card.id = `card-${artId}`;
+      card.innerHTML = `
+        <div class="card-id">#${artId}</div>
+        <div class="card-snippet">${escapeHtml(initialSnippet || 'Article')}</div>
+      `;
+
+      const obj = { cardElement: card, tokenPanel: null, stage: "intake", text: initialSnippet || "" };
+      articles.set(artId, obj);
+      return obj;
+    }
+
+    function moveCardToStation(artId, stage) {
+      const art = getOrCreateCard(artId);
+      const prevStage = art.stage;
+      art.stage = stage;
+      art.cardElement.className = `card stage-${stage}`;
+
+      const tray = document.getElementById(`tray-${stage}`);
+      if (tray) {
+        tray.appendChild(art.cardElement);
+      }
+
+      // In-flight count adjustment if transitioning to output
+      if (["auto_published", "pending_review", "failed"].includes(stage)) {
+        if (!["auto_published", "pending_review", "failed"].includes(prevStage)) {
+          stats.inflight = Math.max(0, stats.inflight - 1);
+        }
+      }
+      updateStatsUI();
+    }
+
+    function appendToTokenStream(artId, token) {
+      let art = getOrCreateCard(artId);
+      if (!art.tokenPanel) {
+        // If initial placeholder exists, remove it
+        if (streamContainer.children.length === 1 && streamContainer.children[0].textContent.includes("Awaiting")) {
+          streamContainer.innerHTML = "";
+        }
+
+        const panel = document.createElement("div");
+        panel.className = "article-stream";
+        panel.id = `stream-${artId}`;
+        panel.innerHTML = `
+          <div class="stream-header">
+            <span>Article #${artId}</span>
+            <span style="font-size: 0.7rem; color: #94a3b8;">GENERATING...</span>
+          </div>
+          <pre class="stream-content"></pre>
+        `;
+        streamContainer.appendChild(panel);
+        art.tokenPanel = panel;
+        activeStreams.push(artId);
+
+        // Keep last 3 visible
+        if (activeStreams.length > 3) {
+          const oldId = activeStreams.shift();
+          const oldEl = document.getElementById(`stream-${oldId}`);
+          if (oldEl) oldEl.style.display = "none";
+        }
+      }
+
+      const pre = art.tokenPanel.querySelector(".stream-content");
+      pre.textContent += token;
+      art.tokenPanel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    function handleEvent(data) {
+      try {
+        const ev = JSON.parse(data);
+        const artId = ev.article_id;
+
+        switch (ev.type) {
+          case "task_started":
+            getOrCreateCard(artId);
+            moveCardToStation(artId, "intake");
+            stats.inflight += 1;
+            addLogLine("STARTED", artId, "Intake started");
+            break;
+
+          case "stage_change":
+            moveCardToStation(artId, ev.stage);
+            addLogLine(`STAGE→${ev.stage.toUpperCase()}`, artId, `Entering ${ev.stage}`);
+            break;
+
+          case "token":
+            appendToTokenStream(artId, ev.token);
+            queueTokenLog(artId, ev.token);
+            break;
+
+          case "task_completed":
+            const isAuto = (ev.status === "auto_published");
+            const laneTray = isAuto ? document.getElementById("tray-auto") : document.getElementById("tray-review");
+            const art = getOrCreateCard(artId);
+            art.stage = ev.status;
+            art.cardElement.className = `card ${isAuto ? "stage-store" : "stage-verify_nli"}`;
+
+            // Cap visible items to 10 in lane
+            if (laneTray.children.length >= 10) {
+              let moreEl = laneTray.parentElement.querySelector(".more-badge");
+              if (!moreEl) {
+                moreEl = document.createElement("div");
+                moreEl.className = "more-badge";
+                laneTray.parentElement.appendChild(moreEl);
+              }
+              const totalInLane = (isAuto ? stats.auto : stats.review) + 1;
+              moreEl.textContent = `+${totalInLane - 10} more`;
+              art.cardElement.style.display = "none";
+            }
+            laneTray.appendChild(art.cardElement);
+
+            if (isAuto) stats.auto += 1;
+            else stats.review += 1;
+
+            stats.inflight = Math.max(0, stats.inflight - 1);
+            if (art.tokenPanel) {
+              const statusBadge = art.tokenPanel.querySelector(".stream-header span:last-child");
+              if (statusBadge) {
+                statusBadge.textContent = isAuto ? "AUTO_PUBLISHED ✓" : "PENDING_REVIEW ⚠";
+                statusBadge.style.color = isAuto ? "#22c55e" : "#eab308";
+              }
+            }
+
+            addLogLine("COMPLETED", artId, `${ev.status} (${isAuto ? 'passed' : 'flagged'})`);
+            break;
+
+          case "task_failed":
+            const failedArt = getOrCreateCard(artId);
+            failedArt.cardElement.className = "card stage-failed";
+            stats.failed += 1;
+            stats.inflight = Math.max(0, stats.inflight - 1);
+            addLogLine("FAILED", artId, ev.reason || "Execution error");
+            break;
+
+          default:
+            addLogLine(ev.type.toUpperCase(), artId, JSON.stringify(ev));
+            break;
+        }
+
+        updateStatsUI();
+      } catch (err) {
+        console.error("Event error:", err);
+      }
+    }
+
+    // WebSocket Management
+    let ws = null;
+    function connectWS() {
+      const wsUrl = `ws://${location.host}/ws/factory`;
+      ws = new WebSocket(wsUrl);
+
+      ws.onopen = () => {
+        reconnectBanner.style.display = "none";
+        addLogLine("WS_CONNECTED", null, "Connected to /ws/factory");
+      };
+
+      ws.onmessage = (e) => {
+        handleEvent(e.data);
+      };
+
+      ws.onclose = () => {
+        reconnectBanner.style.display = "block";
+        addLogLine("WS_CLOSED", null, "Disconnected. Reconnecting in 3s...");
+        setTimeout(connectWS, 3000);
+      };
+
+      ws.onerror = () => {
+        ws.close();
+      };
+    }
+    connectWS();
+
+    // Fetch genuine samples from backend
+    async function ensureSamplesLoaded() {
+      if (cachedSamples.length) return cachedSamples;
+      try {
+        let res = await fetch("/api/articles/samples?limit=300");
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data) && data.length) cachedSamples = data;
+        }
+        if (!cachedSamples.length) {
+          res = await fetch("/static/genuine_articles_300.json");
+          if (res.ok) {
+            const data = await res.json();
+            if (Array.isArray(data) && data.length) cachedSamples = data;
+          }
+        }
+      } catch (e) {
+        console.warn("Could not load genuine_articles_300.json:", e);
+      }
+      return cachedSamples;
+    }
+
+    // Batch Submissions
+    async function loadSamples() {
+      const btn = document.querySelector("button[onclick='loadSamples()']");
+      if (btn) btn.textContent = "Loading...";
+
+      const samples = await ensureSamplesLoaded();
+      if (samples && samples.length) {
+        const start = sampleOffset;
+        const slice = samples.slice(start, start + 20);
+        sampleOffset = (sampleOffset + 20) % samples.length;
+
+        const texts = slice.map(item => (item.text || item.title || "").trim()).filter(Boolean);
+        document.getElementById("batch-text").value = texts.join("\n\n");
+        addLogLine("LOAD_SAMPLES", null, `Loaded 20 articles from genuine_articles_300.json (items #${start + 1} to #${Math.min(start + 20, samples.length)})`);
+      } else {
+        addLogLine("WARN", null, "genuine_articles_300.json not loaded");
+      }
+      if (btn) btn.textContent = "Load 20 samples";
+    }
+
+    function clearAll() {
+      document.getElementById("batch-text").value = "";
+      logContainer.innerHTML = "";
+      logs.length = 0;
+      document.getElementById("log-count").textContent = "0 lines";
+    }
+
+    async function submitBatch(n) {
+      let text = document.getElementById("batch-text").value.trim();
+      let items = text ? text.split(/\n\s*\n+/).map(s => s.trim()).filter(Boolean) : [];
+
+      if (!items.length) {
+        const samples = await ensureSamplesLoaded();
+        if (samples && samples.length) {
+          items = samples.slice(0, n).map(it => (it.text || it.title || "").trim()).filter(Boolean);
+        }
+      }
+
+      const toSubmit = items.slice(0, n);
+      if (!toSubmit.length) {
+        addLogLine("WARN", null, "No articles to submit");
+        return;
+      }
+
+      stats.submitted += toSubmit.length;
+      updateStatsUI();
+      addLogLine("BATCH_SUBMIT", null, `Submitting ${toSubmit.length} articles concurrently...`);
+
+      const promises = toSubmit.map(txt => {
+        return fetch("/articles/submit", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ text: txt, risk_level: "normal" })
+        })
+        .then(r => r.json())
+        .then(data => {
+          // Pre-register article card with text preview
+          getOrCreateCard(data.article_id, txt.slice(0, 32));
+        })
+        .catch(err => {
+          console.error("Submit err:", err);
+          stats.failed += 1;
+          updateStatsUI();
+        });
+      });
+
+      await Promise.all(promises);
+    }
+
+    // Dev-only: poll reload stamp every 1s, refresh on change
+    let _lastStamp = 0;
+    setInterval(async () => {
+      try {
+        const r = await fetch("/api/reload-check");
+        const { mtime } = await r.json();
+        if (_lastStamp && mtime !== _lastStamp) location.reload();
+        _lastStamp = mtime;
+      } catch (_) { /* ignore in prod */ }
+    }, 1000);
+  </script>
+</body>
+</html>
+

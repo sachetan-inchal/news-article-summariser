@@ -47,6 +47,19 @@ An autonomous, production-grade business news summariser and hallucination-verif
 
 ---
 
+## Real-Time 2D Virtual Factory Dashboard
+
+A real-time visual factory floor is available at `GET /factory`:
+- **WebSocket Event Relay**: `/ws/factory` receives pipeline events (`task_started`, `stage_change`, `token`, `task_completed`, `task_failed`) from Redis pub/sub.
+- **Factory Floor Stations**: Real-time visual cards moving through `INTAKE` → `LLM` → `RULES` → `NLI` → `DB` → `AUTO ✓` / `REVIEW ⚠`.
+- **Live Token Stream**: Character-by-character streaming display directly from the Ollama generation task.
+- **Batched Event Logging**: Aggregated token lines and millisecond timestamps.
+- **Batch Processing Panel**: Paste articles or load 20 pre-built samples and submit simultaneously.
+
+> **Note on Metrics**: Metrics displayed on the factory floor top bar are client-side session state for live monitoring and reset on page reload.
+
+---
+
 ## Local Development (Non-Docker)
 
 1. **Activate Virtualenv**:
@@ -84,7 +97,11 @@ An autonomous, production-grade business news summariser and hallucination-verif
 
 6. **Access Dashboard**:
    - Web Review Dashboard: `http://localhost:8000/review`
+   - Virtual Factory Floor: `http://localhost:8000/factory`
    - API Docs: `http://localhost:8000/docs`
+
+> Nodemon is **dev tooling only**. Production runs entirely on Python and does not require Node. To enable hot-reload during frontend edits, install nodemon (`npm install -g nodemon`) and run `./dev.sh` (or `.\dev.ps1` on Windows).
+
 
 ---
 
