@@ -4,21 +4,22 @@
   <meta charset="UTF-8">
   <title>News Summariser Factory Floor</title>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    * { box-sizing: border-box; margin: 0; padding: 0; border-radius: 0 !important; }
+    
     body {
-      background: #0f1117;
+      background: #0d0f14;
       color: #e2e8f0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace, sans-serif;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
     }
 
-    /* Top Navigation & Metrics Bar */
+    /* Top Navigation & Metrics Bar - Industrial Technical Look */
     header {
-      background: #1a1d29;
-      border-bottom: 1px solid #2a2d3a;
-      padding: 0.75rem 1.5rem;
+      background: #141720;
+      border-bottom: 1px solid #262c3b;
+      padding: 0.6rem 1.25rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -27,258 +28,371 @@
       z-index: 50;
     }
     .brand {
-      font-size: 1.15rem;
+      font-size: 0.95rem;
       font-weight: 700;
-      letter-spacing: 0.05em;
+      font-family: monospace;
+      letter-spacing: 0.08em;
       text-transform: uppercase;
-      color: #60a5fa;
+      color: #cbd5e1;
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: 0.6rem;
+    }
+    .brand .sys-indicator {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      background: #22c55e;
     }
     .metrics {
       display: flex;
-      gap: 1rem;
+      gap: 0.5rem;
     }
     .metric-badge {
-      background: #12151f;
-      border: 1px solid #2a2d3a;
-      border-radius: 6px;
-      padding: 0.35rem 0.75rem;
-      font-size: 0.85rem;
+      background: #0d0f14;
+      border: 1px solid #262c3b;
+      padding: 0.3rem 0.6rem;
+      font-size: 0.75rem;
+      font-family: monospace;
       display: flex;
       gap: 0.4rem;
       align-items: center;
     }
-    .metric-badge span.val {
-      font-weight: bold;
-      font-family: monospace;
-      font-size: 0.95rem;
-    }
-    .m-submitted span.val { color: #93c5fd; }
+    .metric-badge span.lbl { color: #64748b; text-transform: uppercase; }
+    .metric-badge span.val { font-weight: 700; color: #f1f5f9; }
+    .m-submitted span.val { color: #60a5fa; }
     .m-inflight span.val { color: #f59e0b; }
     .m-auto span.val { color: #22c55e; }
     .m-review span.val { color: #eab308; }
     .m-failed span.val { color: #ef4444; }
 
-    /* Main Grid Layout */
+    /* Layout */
     .container {
       display: flex;
       flex: 1;
-      gap: 1rem;
-      padding: 1rem;
-      height: calc(100vh - 60px);
+      gap: 0.75rem;
+      padding: 0.75rem;
+      height: calc(100vh - 52px);
       overflow: hidden;
     }
 
-    /* Left Sidebar */
+    /* Left Sidebar: Controls, Range Selector, Event Log */
     .sidebar {
-      width: 360px;
+      width: 380px;
       display: flex;
       flex-direction: column;
-      gap: 1rem;
+      gap: 0.75rem;
       height: 100%;
     }
     .panel {
-      background: #1a1d29;
-      border: 1px solid #2a2d3a;
-      border-radius: 8px;
-      padding: 1rem;
+      background: #141720;
+      border: 1px solid #262c3b;
+      padding: 0.75rem;
       display: flex;
       flex-direction: column;
     }
     .panel-title {
-      font-size: 0.8rem;
+      font-size: 0.75rem;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
+      font-family: monospace;
+      letter-spacing: 0.06em;
       color: #94a3b8;
       font-weight: 700;
       margin-bottom: 0.5rem;
       display: flex;
       justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #202534;
+      padding-bottom: 0.35rem;
     }
 
-    .batch-input-panel { flex: 0 0 auto; }
+    /* Article Selector Controls */
+    .selector-box {
+      background: #0d0f14;
+      border: 1px solid #202534;
+      padding: 0.5rem;
+      margin-bottom: 0.6rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+    .selector-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.75rem;
+      font-family: monospace;
+    }
+    .selector-row label { color: #64748b; }
+    .selector-inputs {
+      display: flex;
+      gap: 0.3rem;
+      align-items: center;
+    }
+    input[type="number"], select {
+      background: #141720;
+      border: 1px solid #2d3748;
+      color: #f1f5f9;
+      font-family: monospace;
+      font-size: 0.75rem;
+      padding: 0.2rem 0.4rem;
+      width: 65px;
+    }
+    input[type="number"]:focus, select:focus {
+      outline: 1px solid #3b82f6;
+    }
+    .range-summary {
+      color: #38bdf8;
+      font-weight: 700;
+      font-family: monospace;
+    }
+    .stepper-btn-row {
+      display: flex;
+      gap: 0.3rem;
+    }
+    .stepper-btn-row button {
+      flex: 1;
+      padding: 0.25rem 0.4rem;
+      font-size: 0.7rem;
+      background: #1c2230;
+      border: 1px solid #2d3748;
+      color: #cbd5e1;
+    }
+    .stepper-btn-row button:hover {
+      background: #273145;
+      color: #fff;
+    }
+
     textarea#batch-text {
       width: 100%;
-      height: 130px;
-      background: #0f1117;
-      border: 1px solid #2a2d3a;
-      border-radius: 6px;
-      color: #e2e8f0;
-      font-family: inherit;
-      font-size: 0.85rem;
-      padding: 0.5rem;
+      height: 95px;
+      background: #0d0f14;
+      border: 1px solid #202534;
+      color: #cbd5e1;
+      font-family: monospace;
+      font-size: 0.75rem;
+      padding: 0.4rem;
       resize: vertical;
-      margin-bottom: 0.75rem;
+      margin-bottom: 0.5rem;
+      line-height: 1.35;
     }
     textarea#batch-text:focus {
-      outline: none;
-      border-color: #3b82f6;
+      outline: 1px solid #3b82f6;
     }
+
     .btn-row {
       display: flex;
       flex-wrap: wrap;
-      gap: 0.4rem;
+      gap: 0.3rem;
     }
     button {
-      background: #2563eb;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      padding: 0.35rem 0.65rem;
-      font-size: 0.8rem;
+      background: #1e3a8a;
+      color: #f1f5f9;
+      border: 1px solid #2563eb;
+      padding: 0.3rem 0.6rem;
+      font-size: 0.75rem;
+      font-family: monospace;
       font-weight: 600;
       cursor: pointer;
-      transition: background 0.15s;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      transition: background 0.1s, border-color 0.1s;
     }
-    button:hover { background: #1d4ed8; }
+    button:hover {
+      background: #2563eb;
+      border-color: #60a5fa;
+    }
+    button.btn-action {
+      background: #15803d;
+      border-color: #22c55e;
+      color: white;
+      font-weight: bold;
+    }
+    button.btn-action:hover {
+      background: #16a34a;
+    }
     button.btn-secondary {
-      background: #334155;
+      background: #1c2230;
+      border-color: #2d3748;
+      color: #94a3b8;
     }
-    button.btn-secondary:hover { background: #475569; }
+    button.btn-secondary:hover {
+      background: #273145;
+      color: #f1f5f9;
+      border-color: #475569;
+    }
     button.btn-danger {
+      background: #7f1d1d;
+      border-color: #dc2626;
+      color: white;
+    }
+    button.btn-danger:hover {
       background: #991b1b;
     }
-    button.btn-danger:hover { background: #b91c1c; }
 
+    .checkbox-row {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      margin-top: 0.4rem;
+      font-size: 0.7rem;
+      font-family: monospace;
+      color: #94a3b8;
+    }
+
+    /* Event Log */
     .event-log-panel {
       flex: 1;
       min-height: 0;
     }
     #event-log {
       flex: 1;
-      background: #0a0d14;
-      border: 1px solid #2a2d3a;
-      border-radius: 6px;
-      padding: 0.5rem;
+      background: #090b10;
+      border: 1px solid #202534;
+      padding: 0.4rem;
       font-family: monospace;
-      font-size: 0.75rem;
+      font-size: 0.7rem;
       overflow-y: auto;
       white-space: pre-wrap;
-      line-height: 1.4;
-      color: #cbd5e1;
+      line-height: 1.35;
+      color: #94a3b8;
     }
-    .log-line { margin-bottom: 2px; }
-    .log-time { color: #64748b; }
+    .log-line { margin-bottom: 1px; }
+    .log-time { color: #475569; }
     .log-type { color: #38bdf8; font-weight: bold; }
-    .log-art { color: #fbbf24; }
+    .log-art { color: #e2e8f0; }
 
-    /* Factory Floor (Right Flex) */
+    /* Right Section: Factory Floor */
     .factory-area {
       flex: 1;
       display: flex;
       flex-direction: column;
-      gap: 1rem;
+      gap: 0.75rem;
       height: 100%;
       overflow-y: auto;
     }
 
-    /* Conveyor Belt Stations */
     .conveyor {
-      background: #1a1d29;
-      border: 1px solid #2a2d3a;
-      border-radius: 8px;
-      padding: 1rem;
+      background: #141720;
+      border: 1px solid #262c3b;
+      padding: 0.75rem;
       display: flex;
       flex-direction: column;
-      gap: 0.75rem;
+      gap: 0.6rem;
     }
     .stations-row {
       display: flex;
-      gap: 0.75rem;
+      gap: 0.6rem;
       align-items: stretch;
       overflow-x: auto;
-      padding-bottom: 0.5rem;
     }
     .station {
       flex: 1;
-      min-width: 140px;
-      background: #12151f;
-      border: 1px solid #2a2d3a;
-      border-radius: 6px;
+      min-width: 145px;
+      background: #0d0f14;
+      border: 1px solid #262c3b;
       display: flex;
       flex-direction: column;
-      min-height: 180px;
-      transition: border-color 0.2s;
+      min-height: 200px;
     }
     .station-header {
-      background: #181b26;
-      border-bottom: 1px solid #2a2d3a;
-      padding: 0.4rem 0.6rem;
-      font-size: 0.75rem;
+      background: #181d28;
+      border-bottom: 1px solid #262c3b;
+      padding: 0.35rem 0.5rem;
+      font-size: 0.7rem;
       font-family: monospace;
       font-weight: 700;
       color: #94a3b8;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      letter-spacing: 0.05em;
     }
     .station.active {
-      animation: pulseBorder 1.2s infinite alternate;
-    }
-    @keyframes pulseBorder {
-      0% { border-color: #3b82f6; box-shadow: 0 0 5px rgba(59, 130, 246, 0.3); }
-      100% { border-color: #93c5fd; box-shadow: 0 0 12px rgba(147, 197, 253, 0.6); }
+      border-color: #3b82f6;
+      box-shadow: inset 0 0 0 1px #3b82f6;
     }
     .station-tray {
-      padding: 0.5rem;
+      padding: 0.4rem;
       display: flex;
       flex-direction: column;
       gap: 0.4rem;
       flex: 1;
       overflow-y: auto;
-      max-height: 240px;
+      max-height: 250px;
     }
 
-    /* Article Card */
+    /* Utilitarian Square Article Card (No Left Colored Stripe, Fully Square) */
     .card {
-      background: #1e2230;
-      border: 1px solid #2d3345;
-      border-left: 3px solid #64748b;
-      border-radius: 4px;
+      background: #161a24;
+      border: 1px solid #2d3748;
       padding: 0.4rem 0.5rem;
       font-size: 0.75rem;
-      animation: fadeIn 0.2s ease-in-out;
-      cursor: default;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      transition: border-color 0.15s, background 0.15s;
     }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-3px); }
-      to { opacity: 1; transform: translateY(0); }
+    .card:hover {
+      border-color: #60a5fa;
+      background: #1f2533;
     }
-    .card.stage-intake { border-left-color: #94a3b8; }
-    .card.stage-llm { border-left-color: #3b82f6; }
-    .card.stage-verify_rules { border-left-color: #a855f7; }
-    .card.stage-verify_nli { border-left-color: #eab308; }
-    .card.stage-store { border-left-color: #10b981; }
-    .card.stage-failed { border-left-color: #ef4444; background: #2a1b1b; }
-    .card-id { font-weight: bold; color: #f1f5f9; font-family: monospace; }
-    .card-snippet { color: #94a3b8; margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: monospace;
+      font-size: 0.7rem;
+      border-bottom: 1px solid #222938;
+      padding-bottom: 0.2rem;
+    }
+    .card-id { font-weight: 700; color: #f8fafc; }
+    .card-stage-tag {
+      font-size: 0.65rem;
+      padding: 0.1rem 0.3rem;
+      background: #202736;
+      color: #94a3b8;
+    }
+    .card.stage-intake .card-stage-tag { color: #94a3b8; }
+    .card.stage-llm .card-stage-tag { color: #60a5fa; }
+    .card.stage-verify_rules .card-stage-tag { color: #c084fc; }
+    .card.stage-verify_nli .card-stage-tag { color: #facc15; }
+    .card.stage-store .card-stage-tag { color: #4ade80; }
+    .card.stage-failed .card-stage-tag { color: #f87171; background: #3b1111; }
+    .card-snippet {
+      color: #94a3b8;
+      font-size: 0.7rem;
+      line-height: 1.3;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
 
     /* Output Lanes */
     .output-row {
       display: flex;
-      gap: 1rem;
+      gap: 0.6rem;
     }
     .output-lane {
       flex: 1;
-      background: #12151f;
-      border: 1px solid #2a2d3a;
-      border-radius: 8px;
-      padding: 0.75rem;
-      min-height: 140px;
+      background: #0d0f14;
+      border: 1px solid #262c3b;
+      padding: 0.5rem;
+      min-height: 130px;
       display: flex;
       flex-direction: column;
     }
-    .lane-auto { border-top: 3px solid #22c55e; }
-    .lane-review { border-top: 3px solid #eab308; }
+    .lane-auto { border-top: 2px solid #22c55e; }
+    .lane-review { border-top: 2px solid #eab308; }
     .lane-title {
-      font-size: 0.8rem;
+      font-size: 0.75rem;
       font-weight: 700;
-      margin-bottom: 0.5rem;
+      margin-bottom: 0.4rem;
       display: flex;
       justify-content: space-between;
       font-family: monospace;
+      letter-spacing: 0.05em;
     }
     .lane-auto .lane-title { color: #22c55e; }
     .lane-review .lane-title { color: #eab308; }
@@ -290,139 +404,288 @@
       flex: 1;
     }
     .lane-tray .card {
-      width: 140px;
+      width: 135px;
     }
     .more-badge {
-      font-size: 0.75rem;
-      color: #94a3b8;
-      align-self: center;
-      padding: 0.2rem 0.5rem;
+      font-size: 0.7rem;
+      color: #64748b;
       font-family: monospace;
+      padding: 0.2rem 0.4rem;
+      align-self: center;
     }
 
     /* Live Token Stream */
     .token-panel {
-      background: #1a1d29;
-      border: 1px solid #2a2d3a;
-      border-radius: 8px;
-      padding: 1rem;
+      background: #141720;
+      border: 1px solid #262c3b;
+      padding: 0.75rem;
       flex: 1;
       display: flex;
       flex-direction: column;
-      min-height: 200px;
+      min-height: 180px;
     }
     .token-stream-container {
       flex: 1;
-      background: #0a0d14;
-      border: 1px solid #2a2d3a;
-      border-radius: 6px;
-      padding: 0.75rem;
+      background: #090b10;
+      border: 1px solid #202534;
+      padding: 0.6rem;
       overflow-y: auto;
       display: flex;
       flex-direction: column;
-      gap: 0.75rem;
+      gap: 0.5rem;
       font-family: monospace;
     }
     .article-stream {
-      border: 1px solid #1e2433;
-      border-radius: 4px;
-      background: #0f1420;
-      padding: 0.5rem;
+      border: 1px solid #202534;
+      background: #0f131c;
+      padding: 0.4rem 0.5rem;
     }
     .stream-header {
       color: #60a5fa;
-      font-size: 0.75rem;
-      font-weight: bold;
-      border-bottom: 1px solid #1e2433;
-      padding-bottom: 0.25rem;
-      margin-bottom: 0.35rem;
+      font-size: 0.7rem;
+      font-weight: 700;
+      border-bottom: 1px solid #1a202c;
+      padding-bottom: 0.2rem;
+      margin-bottom: 0.3rem;
       display: flex;
       justify-content: space-between;
     }
     .stream-content {
-      color: #a5b4fc;
-      font-size: 0.85rem;
-      line-height: 1.4;
+      color: #cbd5e1;
+      font-size: 0.75rem;
+      line-height: 1.35;
       white-space: pre-wrap;
       word-break: break-word;
     }
 
-    /* Reconnect Banner */
+    /* Inspection Modal - Clean Industrial Technical Overlay */
+    #inspect-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(4, 6, 10, 0.75);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+    .modal-dialog {
+      background: #141720;
+      border: 1px solid #3b82f6;
+      width: 100%;
+      max-width: 820px;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+    }
+    .modal-header {
+      background: #181d28;
+      border-bottom: 1px solid #262c3b;
+      padding: 0.6rem 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .modal-title {
+      font-family: monospace;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #f8fafc;
+      letter-spacing: 0.05em;
+    }
+    .modal-close-btn {
+      background: transparent;
+      border: 1px solid #475569;
+      color: #94a3b8;
+      padding: 0.2rem 0.5rem;
+      font-size: 0.75rem;
+      cursor: pointer;
+    }
+    .modal-close-btn:hover {
+      background: #7f1d1d;
+      border-color: #ef4444;
+      color: white;
+    }
+    .modal-body {
+      padding: 1rem;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .inspect-meta-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.5rem;
+      font-family: monospace;
+      font-size: 0.75rem;
+    }
+    .meta-item {
+      background: #0d0f14;
+      border: 1px solid #202534;
+      padding: 0.4rem;
+    }
+    .meta-lbl { color: #64748b; font-size: 0.65rem; text-transform: uppercase; margin-bottom: 2px; }
+    .meta-val { color: #f1f5f9; font-weight: 700; }
+    
+    .inspect-split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+    }
+    .inspect-col {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+    .inspect-col-title {
+      font-family: monospace;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: #94a3b8;
+    }
+    .inspect-text-box {
+      background: #090b10;
+      border: 1px solid #202534;
+      padding: 0.75rem;
+      font-size: 0.8rem;
+      line-height: 1.45;
+      color: #cbd5e1;
+      height: 220px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+    }
+    .inspect-verification-box {
+      background: #0d0f14;
+      border: 1px solid #202534;
+      padding: 0.75rem;
+      font-family: monospace;
+      font-size: 0.75rem;
+      line-height: 1.4;
+    }
+
     #reconnect-banner {
       display: none;
-      background: #b91c1c;
+      background: #7f1d1d;
       color: white;
       text-align: center;
-      padding: 0.4rem;
-      font-size: 0.8rem;
-      font-weight: 600;
+      padding: 0.3rem;
+      font-size: 0.75rem;
+      font-family: monospace;
     }
   </style>
 </head>
 <body>
 
-  <div id="reconnect-banner">WebSocket disconnected. Attempting reconnection...</div>
+  <div id="reconnect-banner">DISCONNECTED FROM /ws/factory - RETRYING IN 3S...</div>
 
   <header>
     <div class="brand">
-      <span>⚙</span> NEWS SUMMARISER FACTORY
+      <span class="sys-indicator"></span>
+      NEWS SUMMARISER // DISPATCH & VERIFICATION CONSOLE
     </div>
     <div class="metrics">
-      <div class="metric-badge m-submitted">Submitted: <span class="val" id="stat-submitted">0</span></div>
-      <div class="metric-badge m-inflight">In-Flight: <span class="val" id="stat-inflight">0</span></div>
-      <div class="metric-badge m-auto">Auto: <span class="val" id="stat-auto">0</span></div>
-      <div class="metric-badge m-review">Review: <span class="val" id="stat-review">0</span></div>
-      <div class="metric-badge m-failed">Failed: <span class="val" id="stat-failed">0</span></div>
+      <div class="metric-badge m-submitted"><span class="lbl">SUBMITTED:</span><span class="val" id="stat-submitted">0</span></div>
+      <div class="metric-badge m-inflight"><span class="lbl">IN-FLIGHT:</span><span class="val" id="stat-inflight">0</span></div>
+      <div class="metric-badge m-auto"><span class="lbl">AUTO ✓:</span><span class="val" id="stat-auto">0</span></div>
+      <div class="metric-badge m-review"><span class="lbl">REVIEW ⚠:</span><span class="val" id="stat-review">0</span></div>
+      <div class="metric-badge m-failed"><span class="lbl">FAILED:</span><span class="val" id="stat-failed">0</span></div>
     </div>
   </header>
 
   <div class="container">
     <!-- LEFT SIDEBAR -->
     <div class="sidebar">
-      <div class="panel batch-input-panel">
-        <div class="panel-title">Batch Input</div>
-        <textarea id="batch-text" placeholder="Paste articles separated by blank lines..."></textarea>
+      <div class="panel">
+        <div class="panel-title">
+          <span>Batch Dispatcher</span>
+          <span style="color: #64748b; font-size: 0.7rem;">300 ARTICLES</span>
+        </div>
+
+        <!-- Article Selector & Batch Range Selector -->
+        <div class="selector-box">
+          <div class="selector-row">
+            <label>SOURCE RANGE:</label>
+            <span class="range-summary" id="range-summary">#1 — #20 (20 articles)</span>
+          </div>
+          <div class="selector-row">
+            <div class="selector-inputs">
+              <label>START #</label>
+              <input type="number" id="sel-start" min="1" max="300" value="1" onchange="onRangeChange()">
+            </div>
+            <div class="selector-inputs">
+              <label>COUNT</label>
+              <select id="sel-count" onchange="onRangeChange()">
+                <option value="1">1</option>
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="20" selected>20</option>
+                <option value="50">50</option>
+              </select>
+            </div>
+          </div>
+          <div class="stepper-btn-row">
+            <button onclick="stepBatch(-1)">◄ PREV</button>
+            <button onclick="stepBatch(1)">NEXT ►</button>
+            <button onclick="randomBatch()">⚄ RANDOM</button>
+            <button onclick="loadCurrentRangeToInput()">LOAD RANGE</button>
+          </div>
+        </div>
+
+        <textarea id="batch-text" placeholder="Articles queue payload (separated by blank lines)..."></textarea>
+        
         <div class="btn-row">
-          <button onclick="submitBatch(1)">Submit 1</button>
-          <button onclick="submitBatch(5)">Submit 5</button>
-          <button onclick="submitBatch(20)">Submit 20</button>
-          <button class="btn-secondary" onclick="loadSamples()">Load 20 samples</button>
-          <button class="btn-danger" onclick="clearAll()">Clear</button>
+          <button class="btn-action" onclick="submitCurrentRange()">SUBMIT RANGE</button>
+          <button onclick="submitBatch(1)">SUBMIT 1</button>
+          <button onclick="submitBatch(5)">SUBMIT 5</button>
+          <button onclick="submitBatch(20)">SUBMIT 20</button>
+          <button class="btn-danger" onclick="clearAll()">CLEAR</button>
+        </div>
+
+        <div class="checkbox-row">
+          <input type="checkbox" id="chk-autonext" checked>
+          <label for="chk-autonext">Auto-advance range to next batch after dispatch</label>
         </div>
       </div>
 
       <div class="panel event-log-panel">
         <div class="panel-title">
-          <span>Event Log</span>
-          <span id="log-count" style="font-weight: normal; font-size: 0.75rem;">0 lines</span>
+          <span>Live Event Log</span>
+          <span id="log-count" style="font-weight: normal; font-size: 0.7rem; color: #64748b;">0 entries</span>
         </div>
         <div id="event-log"></div>
       </div>
     </div>
 
-    <!-- FACTORY FLOOR -->
+    <!-- RIGHT FACTORY FLOOR -->
     <div class="factory-area">
       <div class="conveyor">
-        <div class="panel-title">Factory Floor Processing Stations</div>
+        <div class="panel-title">
+          <span>Assembly Line Processing Stations</span>
+          <span style="font-size: 0.65rem; color: #64748b;">CLICK ANY CARD TO INSPECT</span>
+        </div>
+        
         <div class="stations-row">
           <div class="station" data-stage="intake" id="station-intake">
-            <div class="station-header"><span>INTAKE</span><span class="count" id="cnt-intake">0</span></div>
+            <div class="station-header"><span>STATION 01 // INTAKE</span><span id="cnt-intake">0</span></div>
             <div class="station-tray" id="tray-intake"></div>
           </div>
           <div class="station" data-stage="llm" id="station-llm">
-            <div class="station-header"><span>LLM</span><span class="count" id="cnt-llm">0</span></div>
+            <div class="station-header"><span>STATION 02 // LLM</span><span id="cnt-llm">0</span></div>
             <div class="station-tray" id="tray-llm"></div>
           </div>
           <div class="station" data-stage="verify_rules" id="station-verify_rules">
-            <div class="station-header"><span>RULES</span><span class="count" id="cnt-verify_rules">0</span></div>
+            <div class="station-header"><span>STATION 03 // RULES</span><span id="cnt-verify_rules">0</span></div>
             <div class="station-tray" id="tray-verify_rules"></div>
           </div>
           <div class="station" data-stage="verify_nli" id="station-verify_nli">
-            <div class="station-header"><span>NLI</span><span class="count" id="cnt-verify_nli">0</span></div>
+            <div class="station-header"><span>STATION 04 // NLI</span><span id="cnt-verify_nli">0</span></div>
             <div class="station-tray" id="tray-verify_nli"></div>
           </div>
           <div class="station" data-stage="store" id="station-store">
-            <div class="station-header"><span>DB</span><span class="count" id="cnt-store">0</span></div>
+            <div class="station-header"><span>STATION 05 // DB</span><span id="cnt-store">0</span></div>
             <div class="station-tray" id="tray-store"></div>
           </div>
         </div>
@@ -430,11 +693,11 @@
         <!-- Output Lanes -->
         <div class="output-row">
           <div class="output-lane lane-auto">
-            <div class="lane-title"><span>AUTO ✓</span><span id="cnt-lane-auto">0</span></div>
+            <div class="lane-title"><span>LANE // AUTO-PUBLISHED [PASSED]</span><span id="cnt-lane-auto">0</span></div>
             <div class="lane-tray" id="tray-auto"></div>
           </div>
           <div class="output-lane lane-review">
-            <div class="lane-title"><span>REVIEW ⚠</span><span id="cnt-lane-review">0</span></div>
+            <div class="lane-title"><span>LANE // PENDING-REVIEW [FLAGGED]</span><span id="cnt-lane-review">0</span></div>
             <div class="lane-tray" id="tray-review"></div>
           </div>
         </div>
@@ -442,32 +705,450 @@
 
       <!-- Live Token Stream -->
       <div class="token-panel">
-        <div class="panel-title">Live Token Stream</div>
+        <div class="panel-title">
+          <span>Active Token Stream (Ollama Inference)</span>
+          <span style="font-size: 0.65rem; color: #64748b;">STREAMING</span>
+        </div>
         <div class="token-stream-container" id="stream-container">
-          <div style="color: #64748b; font-size: 0.8rem;">Awaiting article token generation...</div>
+          <div style="color: #475569; font-size: 0.75rem;">Awaiting article token generation...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- INSPECTION POPUP MODAL -->
+  <div id="inspect-modal" onclick="onModalBackdropClick(event)">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <div class="modal-title" id="inspect-title">ARTICLE INSPECTION</div>
+        <button class="modal-close-btn" onclick="closeInspectModal()">[ ✕ CLOSE / ESC ]</button>
+      </div>
+      <div class="modal-body">
+        <div class="inspect-meta-grid">
+          <div class="meta-item"><div class="meta-lbl">ARTICLE ID</div><div class="meta-val" id="inspect-id">-</div></div>
+          <div class="meta-item"><div class="meta-lbl">STAGE / STATUS</div><div class="meta-val" id="inspect-status">-</div></div>
+          <div class="meta-item"><div class="meta-lbl">SUMMARY ID</div><div class="meta-val" id="inspect-summary-id">-</div></div>
+          <div class="meta-item"><div class="meta-lbl">VERIFICATION</div><div class="meta-val" id="inspect-verif-result">-</div></div>
+        </div>
+
+        <div class="inspect-split">
+          <div class="inspect-col">
+            <div class="inspect-col-title">ORIGINAL ARTICLE SOURCE</div>
+            <div class="inspect-text-box" id="inspect-orig-text">Loading...</div>
+          </div>
+          <div class="inspect-col">
+            <div class="inspect-col-title">GENERATED 3-SENTENCE SUMMARY</div>
+            <div class="inspect-text-box" id="inspect-summary-text">Awaiting summary...</div>
+          </div>
+        </div>
+
+        <div>
+          <div class="inspect-col-title" style="margin-bottom: 0.35rem;">VERIFICATION DETAILS & REASONING</div>
+          <div class="inspect-verification-box" id="inspect-verif-details">None</div>
         </div>
       </div>
     </div>
   </div>
 
   <script>
-    let sampleOffset = 0;
-    let cachedSamples = [];
-
     // State
-    const articles = new Map(); // article_id -> { cardElement, tokenPanel, stage, text }
-    const activeStreams = []; // list of article_ids currently having stream panels
+    const articles = new Map(); // article_id -> { cardElement, tokenPanel, stage, text, title, summary, verification, summaryId }
+    const activeStreams = [];
     const stats = { submitted: 0, inflight: 0, auto: 0, review: 0, failed: 0 };
     const logs = [];
 
-    // Token batcher
+    let cachedSamples = [];
     let tokenBatchTimeout = null;
-    let pendingTokenBatches = new Map(); // article_id -> { count, snippet }
+    let pendingTokenBatches = new Map();
 
-    // Elements
     const logContainer = document.getElementById("event-log");
     const reconnectBanner = document.getElementById("reconnect-banner");
     const streamContainer = document.getElementById("stream-container");
+    const inspectModal = document.getElementById("inspect-modal");
+
+    // Range Management
+    function getSelectedRange() {
+      const start = Math.max(1, Math.min(300, parseInt(document.getElementById("sel-start").value) || 1));
+      const count = Math.max(1, parseInt(document.getElementById("sel-count").value) || 20);
+      const end = Math.min(300, start + count - 1);
+      return { start, count, end };
+    }
+
+    function onRangeChange() {
+      const { start, end } = getSelectedRange();
+      const actualCount = end - start + 1;
+      document.getElementById("range-summary").textContent = `#${start} — #${end} (${actualCount} articles)`;
+    }
+
+    function stepBatch(direction) {
+      const { start, count } = getSelectedRange();
+      let nextStart = start + (direction * count);
+      if (nextStart > 300) nextStart = 1;
+      if (nextStart < 1) nextStart = Math.max(1, 301 - count);
+      document.getElementById("sel-start").value = nextStart;
+      onRangeChange();
+      loadCurrentRangeToInput();
+    }
+
+    function randomBatch() {
+      const count = parseInt(document.getElementById("sel-count").value) || 20;
+      const maxStart = Math.max(1, 300 - count + 1);
+      const randStart = Math.floor(Math.random() * maxStart) + 1;
+      document.getElementById("sel-start").value = randStart;
+      onRangeChange();
+      loadCurrentRangeToInput();
+    }
+
+    async function ensureSamplesLoaded() {
+      if (cachedSamples.length) return cachedSamples;
+      try {
+        let res = await fetch("/api/articles/samples?limit=300");
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data) && data.length) cachedSamples = data;
+        }
+        if (!cachedSamples.length) {
+          res = await fetch("/static/genuine_articles_300.json");
+          if (res.ok) {
+            const data = await res.json();
+            if (Array.isArray(data) && data.length) cachedSamples = data;
+          }
+        }
+      } catch (e) {
+        console.warn("Could not load genuine_articles_300.json:", e);
+      }
+      return cachedSamples;
+    }
+
+    async function loadCurrentRangeToInput() {
+      const samples = await ensureSamplesLoaded();
+      if (!samples || !samples.length) return;
+
+      const { start, end } = getSelectedRange();
+      const slice = samples.slice(start - 1, end);
+      const texts = slice.map(it => (it.text || it.title || "").trim()).filter(Boolean);
+      document.getElementById("batch-text").value = texts.join("\n\n");
+      addLogLine("RANGE_LOADED", null, `Loaded #${start} to #${end} (${texts.length} articles) into queue`);
+    }
+
+    async function submitCurrentRange() {
+      const samples = await ensureSamplesLoaded();
+      const { start, end, count } = getSelectedRange();
+
+      let items = [];
+      const text = document.getElementById("batch-text").value.trim();
+      if (text) {
+        items = text.split(/\n\s*\n+/).map(s => s.trim()).filter(Boolean);
+      } else if (samples && samples.length) {
+        items = samples.slice(start - 1, end).map(it => (it.text || it.title || "").trim()).filter(Boolean);
+      }
+
+      if (!items.length) {
+        addLogLine("WARN", null, "No articles to submit");
+        return;
+      }
+
+      addLogLine("BATCH_SUBMIT", null, `Submitting batch #${start}–#${end} (${items.length} articles)...`);
+      await dispatchArticles(items);
+
+      if (document.getElementById("chk-autonext").checked) {
+        stepBatch(1);
+      }
+    }
+
+    async function submitBatch(n) {
+      let text = document.getElementById("batch-text").value.trim();
+      let items = text ? text.split(/\n\s*\n+/).map(s => s.trim()).filter(Boolean) : [];
+
+      if (!items.length) {
+        const samples = await ensureSamplesLoaded();
+        const { start } = getSelectedRange();
+        if (samples && samples.length) {
+          items = samples.slice(start - 1, start - 1 + n).map(it => (it.text || it.title || "").trim()).filter(Boolean);
+        }
+      }
+
+      const toSubmit = items.slice(0, n);
+      if (!toSubmit.length) {
+        addLogLine("WARN", null, "No articles in queue");
+        return;
+      }
+
+      await dispatchArticles(toSubmit);
+
+      if (document.getElementById("chk-autonext").checked) {
+        const currentStart = parseInt(document.getElementById("sel-start").value) || 1;
+        document.getElementById("sel-start").value = Math.min(300, currentStart + n);
+        onRangeChange();
+      }
+    }
+
+    async function dispatchArticles(items) {
+      stats.submitted += items.length;
+      updateStatsUI();
+
+      const promises = items.map((txt, idx) => {
+        return fetch("/articles/submit", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ text: txt, risk_level: "normal" })
+        })
+        .then(r => r.json())
+        .then(data => {
+          const art = getOrCreateCard(data.article_id, txt.slice(0, 36));
+          art.text = txt;
+        })
+        .catch(err => {
+          console.error("Submit err:", err);
+          stats.failed += 1;
+          updateStatsUI();
+        });
+      });
+
+      await Promise.all(promises);
+    }
+
+    function clearAll() {
+      document.getElementById("batch-text").value = "";
+      logContainer.innerHTML = "";
+      logs.length = 0;
+      document.getElementById("log-count").textContent = "0 entries";
+    }
+
+    // Inspection Popup Modal
+    async function openInspectModal(artId) {
+      const art = articles.get(artId) || {};
+      document.getElementById("inspect-title").textContent = `ARTICLE INSPECTION // #${artId}`;
+      document.getElementById("inspect-id").textContent = `#${artId}`;
+      document.getElementById("inspect-status").textContent = (art.stage || "UNKNOWN").toUpperCase();
+      document.getElementById("inspect-summary-id").textContent = art.summaryId ? `#${art.summaryId}` : "-";
+      document.getElementById("inspect-verif-result").textContent = 
+        art.verification ? (art.verification.passed ? "PASSED ✓" : "FLAGGED ⚠") : "IN PROGRESS";
+
+      document.getElementById("inspect-orig-text").textContent = art.text || "Loading article text...";
+      document.getElementById("inspect-summary-text").textContent = art.summary || "Generating summary...";
+
+      if (art.verification) {
+        document.getElementById("inspect-verif-details").textContent = JSON.stringify(art.verification, null, 2);
+      } else {
+        document.getElementById("inspect-verif-details").textContent = "Verification pending...";
+      }
+
+      inspectModal.style.display = "flex";
+
+      // If text or summary missing, fetch from API
+      try {
+        const res = await fetch(`/articles/${artId}`);
+        if (res.ok) {
+          const data = await res.json();
+          if (data.text) {
+            art.text = data.text;
+            document.getElementById("inspect-orig-text").textContent = data.text;
+          }
+          if (data.summary) {
+            art.summary = data.summary;
+            document.getElementById("inspect-summary-text").textContent = data.summary;
+          }
+          if (data.status) {
+            art.stage = data.status;
+            document.getElementById("inspect-status").textContent = data.status.toUpperCase();
+          }
+          if (data.verification) {
+            art.verification = data.verification;
+            document.getElementById("inspect-verif-result").textContent = data.verification.passed ? "PASSED ✓" : "FLAGGED ⚠";
+            document.getElementById("inspect-verif-details").textContent = JSON.stringify(data.verification, null, 2);
+          }
+        }
+      } catch (e) {
+        console.warn("Could not fetch article details:", e);
+      }
+    }
+
+    function closeInspectModal() {
+      inspectModal.style.display = "none";
+    }
+
+    function onModalBackdropClick(e) {
+      if (e.target === inspectModal) closeInspectModal();
+    }
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closeInspectModal();
+    });
+
+    // Card & Station Management (Square Utilitarian Style)
+    function getOrCreateCard(artId, initialSnippet) {
+      if (articles.has(artId)) return articles.get(artId);
+
+      const card = document.createElement("div");
+      card.className = "card stage-intake";
+      card.id = `card-${artId}`;
+      card.onclick = () => openInspectModal(artId);
+      card.innerHTML = `
+        <div class="card-top">
+          <span class="card-id">#${artId}</span>
+          <span class="card-stage-tag">[INTAKE]</span>
+        </div>
+        <div class="card-snippet">${escapeHtml(initialSnippet || 'Article')}</div>
+      `;
+
+      const obj = {
+        cardElement: card,
+        tokenPanel: null,
+        stage: "intake",
+        text: initialSnippet || "",
+        summary: "",
+        verification: null,
+        summaryId: null
+      };
+      articles.set(artId, obj);
+      return obj;
+    }
+
+    function moveCardToStation(artId, stage) {
+      const art = getOrCreateCard(artId);
+      const prevStage = art.stage;
+      art.stage = stage;
+      art.cardElement.className = `card stage-${stage}`;
+
+      const tagEl = art.cardElement.querySelector(".card-stage-tag");
+      if (tagEl) {
+        tagEl.textContent = `[${stage.toUpperCase()}]`;
+      }
+
+      const tray = document.getElementById(`tray-${stage}`);
+      if (tray) {
+        tray.appendChild(art.cardElement);
+      }
+
+      if (["auto_published", "pending_review", "failed"].includes(stage)) {
+        if (!["auto_published", "pending_review", "failed"].includes(prevStage)) {
+          stats.inflight = Math.max(0, stats.inflight - 1);
+        }
+      }
+      updateStatsUI();
+    }
+
+    function appendToTokenStream(artId, token) {
+      let art = getOrCreateCard(artId);
+      art.summary = (art.summary || "") + token;
+
+      if (!art.tokenPanel) {
+        if (streamContainer.children.length === 1 && streamContainer.children[0].textContent.includes("Awaiting")) {
+          streamContainer.innerHTML = "";
+        }
+
+        const panel = document.createElement("div");
+        panel.className = "article-stream";
+        panel.id = `stream-${artId}`;
+        panel.innerHTML = `
+          <div class="stream-header">
+            <span>ARTICLE #${artId}</span>
+            <span style="font-size: 0.65rem; color: #60a5fa;">GENERATING...</span>
+          </div>
+          <pre class="stream-content"></pre>
+        `;
+        streamContainer.appendChild(panel);
+        art.tokenPanel = panel;
+        activeStreams.push(artId);
+
+        if (activeStreams.length > 3) {
+          const oldId = activeStreams.shift();
+          const oldEl = document.getElementById(`stream-${oldId}`);
+          if (oldEl) oldEl.style.display = "none";
+        }
+      }
+
+      const pre = art.tokenPanel.querySelector(".stream-content");
+      pre.textContent += token;
+      art.tokenPanel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    function handleEvent(data) {
+      try {
+        const ev = JSON.parse(data);
+        const artId = ev.article_id;
+
+        switch (ev.type) {
+          case "task_started":
+            getOrCreateCard(artId);
+            moveCardToStation(artId, "intake");
+            stats.inflight += 1;
+            addLogLine("STARTED", artId, "Intake registered");
+            break;
+
+          case "stage_change":
+            moveCardToStation(artId, ev.stage);
+            addLogLine(`STAGE→${ev.stage.toUpperCase()}`, artId, `Station ${ev.stage}`);
+            break;
+
+          case "token":
+            appendToTokenStream(artId, ev.token);
+            queueTokenLog(artId, ev.token);
+            break;
+
+          case "task_completed":
+            const isAuto = (ev.status === "auto_published");
+            const laneTray = isAuto ? document.getElementById("tray-auto") : document.getElementById("tray-review");
+            const art = getOrCreateCard(artId);
+            art.stage = ev.status;
+            art.summary = ev.summary || art.summary;
+            art.verification = ev.verification;
+            art.summaryId = ev.summary_id;
+            art.cardElement.className = `card ${isAuto ? "stage-store" : "stage-verify_nli"}`;
+
+            const tagEl = art.cardElement.querySelector(".card-stage-tag");
+            if (tagEl) {
+              tagEl.textContent = isAuto ? "[AUTO ✓]" : "[REVIEW ⚠]";
+              tagEl.style.color = isAuto ? "#22c55e" : "#eab308";
+            }
+
+            if (laneTray.children.length >= 10) {
+              let moreEl = laneTray.parentElement.querySelector(".more-badge");
+              if (!moreEl) {
+                moreEl = document.createElement("div");
+                moreEl.className = "more-badge";
+                laneTray.parentElement.appendChild(moreEl);
+              }
+              const totalInLane = (isAuto ? stats.auto : stats.review) + 1;
+              moreEl.textContent = `+${totalInLane - 10} MORE`;
+              art.cardElement.style.display = "none";
+            }
+            laneTray.appendChild(art.cardElement);
+
+            if (isAuto) stats.auto += 1;
+            else stats.review += 1;
+
+            stats.inflight = Math.max(0, stats.inflight - 1);
+            if (art.tokenPanel) {
+              const statusBadge = art.tokenPanel.querySelector(".stream-header span:last-child");
+              if (statusBadge) {
+                statusBadge.textContent = isAuto ? "AUTO_PUBLISHED ✓" : "PENDING_REVIEW ⚠";
+                statusBadge.style.color = isAuto ? "#22c55e" : "#eab308";
+              }
+            }
+
+            addLogLine("COMPLETED", artId, `${ev.status}`);
+            break;
+
+          case "task_failed":
+            const failedArt = getOrCreateCard(artId);
+            failedArt.cardElement.className = "card stage-failed";
+            stats.failed += 1;
+            stats.inflight = Math.max(0, stats.inflight - 1);
+            addLogLine("FAILED", artId, ev.reason || "Error");
+            break;
+
+          default:
+            addLogLine(ev.type.toUpperCase(), artId, JSON.stringify(ev));
+            break;
+        }
+
+        updateStatsUI();
+      } catch (err) {
+        console.error("Event err:", err);
+      }
+    }
 
     function updateStatsUI() {
       document.getElementById("stat-submitted").textContent = stats.submitted;
@@ -476,7 +1157,6 @@
       document.getElementById("stat-review").textContent = stats.review;
       document.getElementById("stat-failed").textContent = stats.failed;
 
-      // Update station counts
       ["intake", "llm", "verify_rules", "verify_nli", "store"].forEach(st => {
         const tray = document.getElementById(`tray-${st}`);
         const cntEl = document.getElementById(`cnt-${st}`);
@@ -497,21 +1177,21 @@
       const now = new Date();
       const timeStr = now.toTimeString().split(' ')[0] + '.' + String(now.getMilliseconds()).padStart(3, '0');
       const artStr = artId ? `#${artId}` : '';
-      const lineText = `${timeStr}  ${type.padEnd(11)}  ${artStr.padEnd(6)}  ${details || ''}`;
+      const lineText = `${timeStr}  ${type.padEnd(12)}  ${artStr.padEnd(6)}  ${details || ''}`;
       
       logs.push(lineText);
       if (logs.length > 200) logs.shift();
 
       const el = document.createElement("div");
       el.className = "log-line";
-      el.innerHTML = `<span class="log-time">${timeStr}</span>  <span class="log-type">${type.padEnd(11)}</span>  <span class="log-art">${artStr.padEnd(6)}</span>  ${escapeHtml(details || '')}`;
+      el.innerHTML = `<span class="log-time">${timeStr}</span>  <span class="log-type">${type.padEnd(12)}</span>  <span class="log-art">${artStr.padEnd(6)}</span>  ${escapeHtml(details || '')}`;
       logContainer.appendChild(el);
       logContainer.scrollTop = logContainer.scrollHeight;
-      document.getElementById("log-count").textContent = `${logs.length} lines`;
+      document.getElementById("log-count").textContent = `${logs.length} entries`;
     }
 
     function escapeHtml(str) {
-      return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+      return (str || '').replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
     }
 
     function flushTokenBatches() {
@@ -538,156 +1218,7 @@
       }
     }
 
-    function getOrCreateCard(artId, initialSnippet) {
-      if (articles.has(artId)) return articles.get(artId);
-
-      const card = document.createElement("div");
-      card.className = "card stage-intake";
-      card.id = `card-${artId}`;
-      card.innerHTML = `
-        <div class="card-id">#${artId}</div>
-        <div class="card-snippet">${escapeHtml(initialSnippet || 'Article')}</div>
-      `;
-
-      const obj = { cardElement: card, tokenPanel: null, stage: "intake", text: initialSnippet || "" };
-      articles.set(artId, obj);
-      return obj;
-    }
-
-    function moveCardToStation(artId, stage) {
-      const art = getOrCreateCard(artId);
-      const prevStage = art.stage;
-      art.stage = stage;
-      art.cardElement.className = `card stage-${stage}`;
-
-      const tray = document.getElementById(`tray-${stage}`);
-      if (tray) {
-        tray.appendChild(art.cardElement);
-      }
-
-      // In-flight count adjustment if transitioning to output
-      if (["auto_published", "pending_review", "failed"].includes(stage)) {
-        if (!["auto_published", "pending_review", "failed"].includes(prevStage)) {
-          stats.inflight = Math.max(0, stats.inflight - 1);
-        }
-      }
-      updateStatsUI();
-    }
-
-    function appendToTokenStream(artId, token) {
-      let art = getOrCreateCard(artId);
-      if (!art.tokenPanel) {
-        // If initial placeholder exists, remove it
-        if (streamContainer.children.length === 1 && streamContainer.children[0].textContent.includes("Awaiting")) {
-          streamContainer.innerHTML = "";
-        }
-
-        const panel = document.createElement("div");
-        panel.className = "article-stream";
-        panel.id = `stream-${artId}`;
-        panel.innerHTML = `
-          <div class="stream-header">
-            <span>Article #${artId}</span>
-            <span style="font-size: 0.7rem; color: #94a3b8;">GENERATING...</span>
-          </div>
-          <pre class="stream-content"></pre>
-        `;
-        streamContainer.appendChild(panel);
-        art.tokenPanel = panel;
-        activeStreams.push(artId);
-
-        // Keep last 3 visible
-        if (activeStreams.length > 3) {
-          const oldId = activeStreams.shift();
-          const oldEl = document.getElementById(`stream-${oldId}`);
-          if (oldEl) oldEl.style.display = "none";
-        }
-      }
-
-      const pre = art.tokenPanel.querySelector(".stream-content");
-      pre.textContent += token;
-      art.tokenPanel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    }
-
-    function handleEvent(data) {
-      try {
-        const ev = JSON.parse(data);
-        const artId = ev.article_id;
-
-        switch (ev.type) {
-          case "task_started":
-            getOrCreateCard(artId);
-            moveCardToStation(artId, "intake");
-            stats.inflight += 1;
-            addLogLine("STARTED", artId, "Intake started");
-            break;
-
-          case "stage_change":
-            moveCardToStation(artId, ev.stage);
-            addLogLine(`STAGE→${ev.stage.toUpperCase()}`, artId, `Entering ${ev.stage}`);
-            break;
-
-          case "token":
-            appendToTokenStream(artId, ev.token);
-            queueTokenLog(artId, ev.token);
-            break;
-
-          case "task_completed":
-            const isAuto = (ev.status === "auto_published");
-            const laneTray = isAuto ? document.getElementById("tray-auto") : document.getElementById("tray-review");
-            const art = getOrCreateCard(artId);
-            art.stage = ev.status;
-            art.cardElement.className = `card ${isAuto ? "stage-store" : "stage-verify_nli"}`;
-
-            // Cap visible items to 10 in lane
-            if (laneTray.children.length >= 10) {
-              let moreEl = laneTray.parentElement.querySelector(".more-badge");
-              if (!moreEl) {
-                moreEl = document.createElement("div");
-                moreEl.className = "more-badge";
-                laneTray.parentElement.appendChild(moreEl);
-              }
-              const totalInLane = (isAuto ? stats.auto : stats.review) + 1;
-              moreEl.textContent = `+${totalInLane - 10} more`;
-              art.cardElement.style.display = "none";
-            }
-            laneTray.appendChild(art.cardElement);
-
-            if (isAuto) stats.auto += 1;
-            else stats.review += 1;
-
-            stats.inflight = Math.max(0, stats.inflight - 1);
-            if (art.tokenPanel) {
-              const statusBadge = art.tokenPanel.querySelector(".stream-header span:last-child");
-              if (statusBadge) {
-                statusBadge.textContent = isAuto ? "AUTO_PUBLISHED ✓" : "PENDING_REVIEW ⚠";
-                statusBadge.style.color = isAuto ? "#22c55e" : "#eab308";
-              }
-            }
-
-            addLogLine("COMPLETED", artId, `${ev.status} (${isAuto ? 'passed' : 'flagged'})`);
-            break;
-
-          case "task_failed":
-            const failedArt = getOrCreateCard(artId);
-            failedArt.cardElement.className = "card stage-failed";
-            stats.failed += 1;
-            stats.inflight = Math.max(0, stats.inflight - 1);
-            addLogLine("FAILED", artId, ev.reason || "Execution error");
-            break;
-
-          default:
-            addLogLine(ev.type.toUpperCase(), artId, JSON.stringify(ev));
-            break;
-        }
-
-        updateStatsUI();
-      } catch (err) {
-        console.error("Event error:", err);
-      }
-    }
-
-    // WebSocket Management
+    // WebSocket
     let ws = null;
     function connectWS() {
       const wsUrl = `ws://${location.host}/ws/factory`;
@@ -704,7 +1235,7 @@
 
       ws.onclose = () => {
         reconnectBanner.style.display = "block";
-        addLogLine("WS_CLOSED", null, "Disconnected. Reconnecting in 3s...");
+        addLogLine("WS_CLOSED", null, "Disconnected. Retrying in 3s...");
         setTimeout(connectWS, 3000);
       };
 
@@ -714,98 +1245,11 @@
     }
     connectWS();
 
-    // Fetch genuine samples from backend
-    async function ensureSamplesLoaded() {
-      if (cachedSamples.length) return cachedSamples;
-      try {
-        let res = await fetch("/api/articles/samples?limit=300");
-        if (res.ok) {
-          const data = await res.json();
-          if (Array.isArray(data) && data.length) cachedSamples = data;
-        }
-        if (!cachedSamples.length) {
-          res = await fetch("/static/genuine_articles_300.json");
-          if (res.ok) {
-            const data = await res.json();
-            if (Array.isArray(data) && data.length) cachedSamples = data;
-          }
-        }
-      } catch (e) {
-        console.warn("Could not load genuine_articles_300.json:", e);
-      }
-      return cachedSamples;
-    }
+    // Init
+    onRangeChange();
+    loadCurrentRangeToInput();
 
-    // Batch Submissions
-    async function loadSamples() {
-      const btn = document.querySelector("button[onclick='loadSamples()']");
-      if (btn) btn.textContent = "Loading...";
-
-      const samples = await ensureSamplesLoaded();
-      if (samples && samples.length) {
-        const start = sampleOffset;
-        const slice = samples.slice(start, start + 20);
-        sampleOffset = (sampleOffset + 20) % samples.length;
-
-        const texts = slice.map(item => (item.text || item.title || "").trim()).filter(Boolean);
-        document.getElementById("batch-text").value = texts.join("\n\n");
-        addLogLine("LOAD_SAMPLES", null, `Loaded 20 articles from genuine_articles_300.json (items #${start + 1} to #${Math.min(start + 20, samples.length)})`);
-      } else {
-        addLogLine("WARN", null, "genuine_articles_300.json not loaded");
-      }
-      if (btn) btn.textContent = "Load 20 samples";
-    }
-
-    function clearAll() {
-      document.getElementById("batch-text").value = "";
-      logContainer.innerHTML = "";
-      logs.length = 0;
-      document.getElementById("log-count").textContent = "0 lines";
-    }
-
-    async function submitBatch(n) {
-      let text = document.getElementById("batch-text").value.trim();
-      let items = text ? text.split(/\n\s*\n+/).map(s => s.trim()).filter(Boolean) : [];
-
-      if (!items.length) {
-        const samples = await ensureSamplesLoaded();
-        if (samples && samples.length) {
-          items = samples.slice(0, n).map(it => (it.text || it.title || "").trim()).filter(Boolean);
-        }
-      }
-
-      const toSubmit = items.slice(0, n);
-      if (!toSubmit.length) {
-        addLogLine("WARN", null, "No articles to submit");
-        return;
-      }
-
-      stats.submitted += toSubmit.length;
-      updateStatsUI();
-      addLogLine("BATCH_SUBMIT", null, `Submitting ${toSubmit.length} articles concurrently...`);
-
-      const promises = toSubmit.map(txt => {
-        return fetch("/articles/submit", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ text: txt, risk_level: "normal" })
-        })
-        .then(r => r.json())
-        .then(data => {
-          // Pre-register article card with text preview
-          getOrCreateCard(data.article_id, txt.slice(0, 32));
-        })
-        .catch(err => {
-          console.error("Submit err:", err);
-          stats.failed += 1;
-          updateStatsUI();
-        });
-      });
-
-      await Promise.all(promises);
-    }
-
-    // Dev-only: poll reload stamp every 1s, refresh on change
+    // Dev reload listener
     let _lastStamp = 0;
     setInterval(async () => {
       try {
@@ -813,9 +1257,8 @@
         const { mtime } = await r.json();
         if (_lastStamp && mtime !== _lastStamp) location.reload();
         _lastStamp = mtime;
-      } catch (_) { /* ignore in prod */ }
+      } catch (_) {}
     }, 1000);
   </script>
 </body>
 </html>
-

@@ -57,8 +57,23 @@ def task_status(task_id: str):
 def get_summary(summary_id: int, db: Session = Depends(get_db)):
     s = db.get(Summary, summary_id)
     if not s: raise HTTPException(404)
+    a = db.get(Article, s.article_id)
     return {"id": s.id, "article_id": s.article_id, "content": s.content,
-            "status": s.status, "verification": s.verification}
+            "status": s.status, "verification": s.verification,
+            "article_title": a.title if a else None,
+            "article_text": a.content if a else None}
+
+@app.get("/articles/{article_id}")
+def get_article(article_id: int, db: Session = Depends(get_db)):
+    a = db.get(Article, article_id)
+    if not a: raise HTTPException(404)
+    s = db.query(Summary).filter(Summary.article_id == a.id).order_by(Summary.id.desc()).first()
+    return {"id": a.id, "title": a.title, "text": a.content, "category": a.category,
+            "risk_level": a.risk_level,
+            "summary": s.content if s else None,
+            "status": s.status if s else None,
+            "verification": s.verification if s else None,
+            "summary_id": s.id if s else None}
 
 @app.get("/summaries")
 def list_summaries(status: str | None = None, db: Session = Depends(get_db)):
