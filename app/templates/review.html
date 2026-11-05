@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Editor Review</title>
+  <style>
+    body { font-family: -apple-system, sans-serif; max-width: 900px; margin: 2rem auto; padding: 0 1rem; }
+    .card { border: 1px solid #ddd; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; }
+    .card.flagged { border-color: #d33; background: #fff5f5; }
+    .summary { font-size: 1.05rem; }
+    .reason { color: #a00; font-size: 0.85rem; font-family: monospace; margin-top: 0.5rem; word-break: break-all; }
+    .actions button { margin-right: 0.5rem; padding: 0.4rem 0.9rem; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <h1>Pending Summaries</h1>
+  <div id="list">Loading…</div>
+  <script>
+    async function load() {
+      const res = await fetch("/api/review/pending");
+      const items = await res.json();
+      const list = document.getElementById("list");
+      if (!items.length) { list.innerHTML = "<p>No pending summaries.</p>"; return; }
+      list.innerHTML = items.map(it => `
+        <div class="card ${it.verification && it.verification.passed ? "" : "flagged"}">
+          <div><strong>Article #${it.article_id}</strong> — ${it.article_title || ""}</div>
+          <p class="summary">${it.summary}</p>
+          ${it.verification && !it.verification.passed
+            ? `<div class="reason">${JSON.stringify(it.verification.errors)}</div>` : ""}
+          <div class="actions">
+            <button onclick="act(${it.summary_id}, 'approve')">Approve</button>
+            <button onclick="act(${it.summary_id}, 'reject')">Reject</button>
+          </div>
+        </div>`).join("");
+    }
+    async function act(id, action) {
+      await fetch(`/api/review/${id}/${action}`, { method: "POST" });
+      load();
+    }
+    load();
+  </script>
+</body>
+</html>
+
